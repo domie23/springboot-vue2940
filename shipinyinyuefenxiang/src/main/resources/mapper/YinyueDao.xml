@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.YinyueDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.yinyue_name as yinyueName
+        ,a.yinyue_photo as yinyuePhoto
+        ,a.yinyue_types as yinyueTypes
+        ,a.yinyue_music as yinyueMusic
+        ,a.yinyue_clicknum as yinyueClicknum
+        ,a.shangxia_types as shangxiaTypes
+        ,a.yinyue_delete as yinyueDelete
+        ,a.yinyue_content as yinyueContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.YinyueView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM yinyue  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.yinyueName != '' and params.yinyueName != null and params.yinyueName != 'null' ">
+                and a.yinyue_name like CONCAT('%',#{params.yinyueName},'%')
+            </if>
+            <if test="params.yinyueTypes != null and params.yinyueTypes != ''">
+                and a.yinyue_types = #{params.yinyueTypes}
+            </if>
+            <if test=" params.yinyueMusic != '' and params.yinyueMusic != null and params.yinyueMusic != 'null' ">
+                and a.yinyue_music like CONCAT('%',#{params.yinyueMusic},'%')
+            </if>
+            <if test="params.yinyueClicknumStart != null and params.yinyueClicknumStart != ''">
+                <![CDATA[  and a.yinyue_clicknum >= #{params.yinyueClicknumStart}   ]]>
+            </if>
+            <if test="params.yinyueClicknumEnd != null and params.yinyueClicknumEnd != ''">
+                <![CDATA[  and a.yinyue_clicknum <= #{params.yinyueClicknumEnd}   ]]>
+            </if>
+             <if test="params.yinyueClicknum != null and params.yinyueClicknum != ''">
+                and a.yinyue_clicknum = #{params.yinyueClicknum}
+             </if>
+            <if test="params.shangxiaTypes != null and params.shangxiaTypes != ''">
+                and a.shangxia_types = #{params.shangxiaTypes}
+            </if>
+            <if test="params.yinyueDeleteStart != null and params.yinyueDeleteStart != ''">
+                <![CDATA[  and a.yinyue_delete >= #{params.yinyueDeleteStart}   ]]>
+            </if>
+            <if test="params.yinyueDeleteEnd != null and params.yinyueDeleteEnd != ''">
+                <![CDATA[  and a.yinyue_delete <= #{params.yinyueDeleteEnd}   ]]>
+            </if>
+             <if test="params.yinyueDelete != null and params.yinyueDelete != ''">
+                and a.yinyue_delete = #{params.yinyueDelete}
+             </if>
+            <if test=" params.yinyueContent != '' and params.yinyueContent != null and params.yinyueContent != 'null' ">
+                and a.yinyue_content like CONCAT('%',#{params.yinyueContent},'%')
+            </if>
+
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>
